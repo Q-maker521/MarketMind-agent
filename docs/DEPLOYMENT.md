@@ -69,6 +69,7 @@ MARKETMIND_CORS_ORIGINS=["https://your-domain.com"]
 MARKETMIND_DATABASE_PATH=/opt/marketmind-agent/data/marketmind.db
 MARKETMIND_MARKET_DATA_PROVIDER=mock
 MARKETMIND_ALPHA_VANTAGE_API_KEY=
+MARKETMIND_TWELVE_DATA_API_KEY=demo
 MARKETMIND_LLM_PROVIDER=mock
 MARKETMIND_LLM_API_BASE_URL=
 MARKETMIND_LLM_API_KEY=
@@ -224,10 +225,11 @@ MARKETMIND_LLM_PROVIDER=mock
 
 Real market data trial:
 
-No-key real market data:
+Demo-key real market data:
 
 ```text
-MARKETMIND_MARKET_DATA_PROVIDER=yahoo_finance
+MARKETMIND_MARKET_DATA_PROVIDER=twelve_data
+MARKETMIND_TWELVE_DATA_API_KEY=demo
 ```
 
 Alpha Vantage market data:

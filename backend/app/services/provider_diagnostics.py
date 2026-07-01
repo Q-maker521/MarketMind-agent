@@ -23,7 +23,7 @@ def _check_market_data(payload: ProviderDiagnosticsRequest) -> ProviderDiagnosti
     provider = get_market_data_provider()
     provider_name = provider.__class__.__name__
     configured_provider = settings.market_data_provider.lower()
-    configured = configured_provider == "yahoo_finance" or (
+    configured = configured_provider == "twelve_data" or (
         configured_provider == "alpha_vantage" and bool(settings.alpha_vantage_api_key)
     )
     started_at = perf_counter()

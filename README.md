@@ -42,7 +42,7 @@ The public demo defaults to mock market data and mock LLM report writing so it c
 - Frontend: React, Vite
 - UI icons: lucide-react
 - Markdown rendering: marked
-- Market data: mock provider by default, Yahoo Finance no-key provider and Alpha Vantage provider prepared
+- Market data: mock provider by default, Twelve Data demo provider and Alpha Vantage provider prepared
 - LLM: mock provider by default, OpenAI-compatible provider prepared
 
 ## Workflow Nodes
@@ -86,7 +86,7 @@ Each run persists:
 Market data:
 
 - `MockMarketDataProvider`
-- `YahooFinanceMarketDataProvider`
+- `TwelveDataMarketDataProvider`
 - `AlphaVantageMarketDataProvider`
 
 LLM:
@@ -262,7 +262,7 @@ docs/INTERVIEW_NOTES.md
 ## Roadmap
 
 - Real Alpha Vantage key verification
-- Real Yahoo Finance market data trial
+- Real Twelve Data market data trial
 - Real OpenAI-compatible LLM verification
 - Task detail route and shareable URLs
 - Public website deployment

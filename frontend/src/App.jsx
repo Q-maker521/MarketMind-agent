@@ -495,8 +495,8 @@ function CapabilityPanel({
 
   const marketDataLabel = capabilities.external_market_data_ready ? "真实行情可用" : "本地样例行情";
   const marketConfigLabel =
-    capabilities.configured_market_data_provider === "yahoo_finance"
-      ? "无需 Key"
+    capabilities.configured_market_data_provider === "twelve_data"
+      ? "Demo Key"
       : capabilities.alpha_vantage_configured
         ? "已配置"
         : "未配置";

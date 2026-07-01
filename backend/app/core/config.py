@@ -13,6 +13,7 @@ class Settings:
         self.database_path = Path(os.getenv("MARKETMIND_DATABASE_PATH", BACKEND_DIR / "marketmind.db"))
         self.market_data_provider = os.getenv("MARKETMIND_MARKET_DATA_PROVIDER", "mock")
         self.alpha_vantage_api_key = os.getenv("MARKETMIND_ALPHA_VANTAGE_API_KEY", "")
+        self.twelve_data_api_key = os.getenv("MARKETMIND_TWELVE_DATA_API_KEY", "demo")
         self.llm_provider = os.getenv("MARKETMIND_LLM_PROVIDER", "mock")
         self.llm_api_base_url = os.getenv("MARKETMIND_LLM_API_BASE_URL", "")
         self.llm_api_key = os.getenv("MARKETMIND_LLM_API_KEY", "")

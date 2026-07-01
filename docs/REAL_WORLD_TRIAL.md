@@ -26,11 +26,12 @@ MARKETMIND_LLM_PROVIDER=mock
 Then run a controlled real-provider trial:
 
 ```text
-MARKETMIND_MARKET_DATA_PROVIDER=yahoo_finance
+MARKETMIND_MARKET_DATA_PROVIDER=twelve_data
+MARKETMIND_TWELVE_DATA_API_KEY=demo
 MARKETMIND_LLM_PROVIDER=openai_compatible
 ```
 
-`yahoo_finance` is useful for the first online trial because it provides real historical market data without requiring a key. `alpha_vantage` can be used later when you want to test a keyed market data provider.
+`twelve_data` is useful for the first online trial because it provides real historical market data with a public demo key. `alpha_vantage` can be used later when you want to test a personal keyed market data provider.
 
 If a provider fails, the value is still visible because the system records the failed tool call and falls back.
 
