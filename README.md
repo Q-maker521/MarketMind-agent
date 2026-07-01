@@ -219,6 +219,13 @@ Manual acceptance checklist:
 docs/ACCEPTANCE_CHECKLIST.md
 ```
 
+Deployment and online trial:
+
+```text
+docs/DEPLOYMENT.md
+docs/REAL_WORLD_TRIAL.md
+```
+
 ## Portfolio Talking Points
 
 This project is designed to show:
@@ -242,6 +249,6 @@ docs/INTERVIEW_NOTES.md
 - Real Alpha Vantage key verification
 - Real OpenAI-compatible LLM verification
 - Task detail route and shareable URLs
-- Deployment notes for a public website
+- Public website deployment
 - Optional PostgreSQL migration
 - Optional Redis/RQ async executor
