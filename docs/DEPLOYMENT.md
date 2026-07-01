@@ -224,6 +224,14 @@ MARKETMIND_LLM_PROVIDER=mock
 
 Real market data trial:
 
+No-key real market data:
+
+```text
+MARKETMIND_MARKET_DATA_PROVIDER=yahoo_finance
+```
+
+Alpha Vantage market data:
+
 ```text
 MARKETMIND_MARKET_DATA_PROVIDER=alpha_vantage
 MARKETMIND_ALPHA_VANTAGE_API_KEY=your_key

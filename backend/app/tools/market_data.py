@@ -1,9 +1,9 @@
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from math import sin
 from typing import Protocol
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 import json
 
@@ -89,8 +89,76 @@ class AlphaVantageMarketDataProvider:
         }
 
 
+class YahooFinanceMarketDataProvider:
+    name = "yahoo_finance"
+    base_url = "https://query1.finance.yahoo.com/v8/finance/chart/"
+
+    def get_daily_prices(self, symbol: str, time_range: str) -> dict:
+        yahoo_symbol = symbol.strip().upper()
+        params = {
+            "range": _yahoo_range(time_range),
+            "interval": "1d",
+        }
+        request = Request(
+            f"{self.base_url}{yahoo_symbol}?{urlencode(params)}",
+            headers={"User-Agent": "Mozilla/5.0"},
+        )
+
+        try:
+            with urlopen(request, timeout=15) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+        except (TimeoutError, HTTPError, URLError, json.JSONDecodeError) as exc:
+            raise MarketDataProviderError(f"Yahoo Finance request failed: {exc}") from exc
+
+        chart = payload.get("chart", {})
+        if chart.get("error"):
+            raise MarketDataProviderError(f"Yahoo Finance returned error: {chart['error']}")
+
+        try:
+            result = chart["result"][0]
+            timestamps = result["timestamp"]
+            quote = result["indicators"]["quote"][0]
+        except (KeyError, IndexError, TypeError) as exc:
+            raise MarketDataProviderError(f"Yahoo Finance returned malformed chart data: {exc}") from exc
+
+        candles = []
+        try:
+            for index, timestamp in enumerate(timestamps):
+                close = quote["close"][index]
+                if close is None:
+                    continue
+                candles.append(
+                    {
+                        "date": datetime.fromtimestamp(timestamp, UTC).date().isoformat(),
+                        "open": round(float(quote["open"][index]), 2),
+                        "high": round(float(quote["high"][index]), 2),
+                        "low": round(float(quote["low"][index]), 2),
+                        "close": round(float(close), 2),
+                        "volume": int(quote["volume"][index] or 0),
+                    }
+                )
+        except (IndexError, KeyError, TypeError, ValueError) as exc:
+            raise MarketDataProviderError(f"Yahoo Finance returned malformed daily series: {exc}") from exc
+
+        limit = _trading_days_for_range(time_range)
+        candles = candles[-limit:]
+        if len(candles) < 2:
+            raise MarketDataProviderError("Yahoo Finance returned too few candles.")
+
+        return {
+            "symbol": symbol.upper(),
+            "market": "US",
+            "time_range": time_range,
+            "candles": candles,
+            "source": "yahoo_finance",
+            "coverage": "complete" if len(candles) >= limit else "partial",
+        }
+
+
 def get_market_data_provider() -> MarketDataProvider:
     provider_name = settings.market_data_provider.lower()
+    if provider_name == "yahoo_finance":
+        return YahooFinanceMarketDataProvider()
     if provider_name == "alpha_vantage" and settings.alpha_vantage_api_key:
         return AlphaVantageMarketDataProvider(settings.alpha_vantage_api_key)
     return MockMarketDataProvider()
@@ -154,6 +222,16 @@ def _trading_days_for_range(time_range: str) -> int:
     return ranges.get(time_range, 126)
 
 
+def _yahoo_range(time_range: str) -> str:
+    ranges = {
+        "1mo": "1mo",
+        "3mo": "3mo",
+        "6mo": "6mo",
+        "1y": "1y",
+    }
+    return ranges.get(time_range, "6mo")
+
+
 def _base_price_for_symbol(symbol: str) -> float:
     bases = {
         "AAPL": 185.0,
@@ -161,3 +239,4 @@ def _base_price_for_symbol(symbol: str) -> float:
         "NVDA": 118.0,
     }
     return bases.get(symbol.upper(), 100.0)
+

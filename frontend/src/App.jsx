@@ -494,7 +494,12 @@ function CapabilityPanel({
   }
 
   const marketDataLabel = capabilities.external_market_data_ready ? "真实行情可用" : "本地样例行情";
-  const keyLabel = capabilities.alpha_vantage_configured ? "已配置" : "未配置";
+  const marketConfigLabel =
+    capabilities.configured_market_data_provider === "yahoo_finance"
+      ? "无需 Key"
+      : capabilities.alpha_vantage_configured
+        ? "已配置"
+        : "未配置";
   const llmLabel = capabilities.external_llm_ready ? "真实模型可用" : "本地模板生成";
   const llmKeyLabel = capabilities.llm_api_key_configured ? "已配置" : "未配置";
   const llmModelLabel = capabilities.llm_model ?? "未指定";
@@ -511,7 +516,7 @@ function CapabilityPanel({
         <CapabilityItem label="持久化" value={capabilities.persistence} />
         <CapabilityItem label="行情源" value={marketDataLabel} />
         <CapabilityItem label="实际 Provider" value={capabilities.effective_market_data_provider} />
-        <CapabilityItem label="Alpha Vantage Key" value={keyLabel} />
+        <CapabilityItem label="行情配置" value={marketConfigLabel} />
         <CapabilityItem label="模型生成" value={llmLabel} />
         <CapabilityItem label="模型 Provider" value={capabilities.effective_llm_provider} />
         <CapabilityItem label="模型名称" value={llmModelLabel} />

@@ -23,8 +23,10 @@ router = APIRouter()
 def get_system_capabilities() -> SystemCapabilitiesResponse:
     configured_provider = settings.market_data_provider.lower()
     alpha_vantage_configured = bool(settings.alpha_vantage_api_key)
-    external_market_data_ready = configured_provider == "alpha_vantage" and alpha_vantage_configured
-    effective_provider = "alpha_vantage" if external_market_data_ready else "mock"
+    external_market_data_ready = configured_provider == "yahoo_finance" or (
+        configured_provider == "alpha_vantage" and alpha_vantage_configured
+    )
+    effective_provider = configured_provider if external_market_data_ready else "mock"
     configured_llm_provider = settings.llm_provider.lower()
     llm_api_key_configured = bool(settings.llm_api_key)
     external_llm_ready = (
@@ -39,7 +41,9 @@ def get_system_capabilities() -> SystemCapabilitiesResponse:
         "Demo mode uses fixed sample artifacts.",
         "Workflow mode runs LangGraph with persisted steps and tool calls.",
     ]
-    if external_market_data_ready:
+    if configured_provider == "yahoo_finance":
+        notes.append("Yahoo Finance is configured as a real no-key market data provider.")
+    elif external_market_data_ready:
         notes.append("Alpha Vantage is configured; market-data failures fall back to mock OHLCV.")
     else:
         notes.append("External market data is not active; mock OHLCV keeps the public demo stable.")
