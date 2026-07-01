@@ -62,6 +62,7 @@ For each run, record:
 - trace screenshot
 - tool call screenshot
 - history card screenshot
+- provider diagnostics screenshot after changing real/mock provider config
 
 ## Success Criteria
 
@@ -74,6 +75,7 @@ The trial is successful if:
 - provider status is visible in system capabilities
 - fallback behavior is visible when intentionally misconfigured
 - no API key is exposed in the frontend
+- provider diagnostics can verify market data and LLM connectivity after config changes
 
 ## Intentional Failure Test
 
@@ -99,6 +101,7 @@ Then restore the correct config.
 Date:
 Public URL:
 Backend capability:
+Provider diagnostics:
 
 Task ID:
 Symbol:

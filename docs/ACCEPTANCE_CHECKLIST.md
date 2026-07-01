@@ -8,6 +8,7 @@ Use this checklist before pushing the project to GitHub or showing it in an inte
 - [ ] Frontend starts on `http://127.0.0.1:5173`
 - [ ] `GET /health` returns `{"status":"ok"}`
 - [ ] `GET /api/system/capabilities` returns runtime metadata
+- [ ] Provider diagnostics can run from the frontend system capability panel
 
 ## Frontend Workflow
 
@@ -18,6 +19,7 @@ Use this checklist before pushing the project to GitHub or showing it in an inte
 - [ ] Tool calls tab shows tool name, status, input, output, and duration
 - [ ] Failed tool calls are visually distinct
 - [ ] Fallback banner appears when a provider fails
+- [ ] Provider diagnostics shows market data and LLM provider status, latency, and error details
 
 ## Task History
 
@@ -33,6 +35,7 @@ Use this checklist before pushing the project to GitHub or showing it in an inte
 
 - [ ] `POST /api/analysis-tasks`
 - [ ] `POST /api/analysis-tasks/workflow`
+- [ ] `POST /api/system/provider-diagnostics`
 - [ ] `GET /api/analysis-tasks`
 - [ ] `GET /api/analysis-tasks/{task_id}`
 - [ ] `GET /api/analysis-tasks/{task_id}/steps`
@@ -60,8 +63,9 @@ npm run build
 
 1. Open the frontend.
 2. Point out the system capability panel.
-3. Run workflow mode for `AAPL`.
-4. Open the trace tab and explain each Agent node.
-5. Open tool calls and explain provider/tool observability.
-6. Open the report tab and explain quality review.
-7. Use history filters to reload a previous workflow task.
+3. Run provider diagnostics and explain real/mock provider observability.
+4. Run workflow mode for `AAPL`.
+5. Open the trace tab and explain each Agent node.
+6. Open tool calls and explain provider/tool observability.
+7. Open the report tab and explain quality review.
+8. Use history filters to reload a previous workflow task.

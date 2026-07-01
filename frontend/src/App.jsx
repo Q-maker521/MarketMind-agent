@@ -24,6 +24,7 @@ import {
   getTask,
   getTasks,
   getToolCalls,
+  runProviderDiagnostics,
 } from "./api/client";
 
 const defaultPayload = {
@@ -83,8 +84,11 @@ function App() {
   const [error, setError] = useState(null);
   const [capabilities, setCapabilities] = useState(null);
   const [capabilitiesError, setCapabilitiesError] = useState(null);
+  const [diagnostics, setDiagnostics] = useState(null);
+  const [diagnosticsError, setDiagnosticsError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [diagnosticsLoading, setDiagnosticsLoading] = useState(false);
 
   useEffect(() => {
     loadCapabilities();
@@ -122,6 +126,24 @@ function App() {
       setCapabilitiesError(null);
     } catch (requestError) {
       setCapabilitiesError(requestError.message);
+    }
+  }
+
+  async function runDiagnostics() {
+    setDiagnosticsLoading(true);
+    setDiagnosticsError(null);
+    try {
+      const result = await runProviderDiagnostics({
+        symbol: payload.symbol,
+        time_range: payload.time_range,
+        include_llm: true,
+      });
+      setDiagnostics(result);
+      await loadCapabilities();
+    } catch (requestError) {
+      setDiagnosticsError(requestError.message);
+    } finally {
+      setDiagnosticsLoading(false);
     }
   }
 
@@ -265,7 +287,14 @@ function App() {
             onOpenTask={openHistoryTask}
           />
 
-          <CapabilityPanel capabilities={capabilities} error={capabilitiesError} />
+          <CapabilityPanel
+            capabilities={capabilities}
+            diagnostics={diagnostics}
+            diagnosticsError={diagnosticsError}
+            diagnosticsLoading={diagnosticsLoading}
+            error={capabilitiesError}
+            onRunDiagnostics={runDiagnostics}
+          />
         </aside>
 
         <section className="main-panel">
@@ -432,7 +461,14 @@ function formatTaskTime(value) {
   });
 }
 
-function CapabilityPanel({ capabilities, error }) {
+function CapabilityPanel({
+  capabilities,
+  diagnostics,
+  diagnosticsError,
+  diagnosticsLoading,
+  error,
+  onRunDiagnostics,
+}) {
   if (error) {
     return (
       <section className="capability-panel">
@@ -485,7 +521,51 @@ function CapabilityPanel({ capabilities, error }) {
         支持市场：{capabilities.supported_markets.join(", ")} · 周期：
         {capabilities.supported_time_ranges.join(", ")}
       </p>
+      <button className="diagnostics-action" type="button" onClick={onRunDiagnostics} disabled={diagnosticsLoading}>
+        <Activity size={15} />
+        {diagnosticsLoading ? "诊断中" : "运行环境诊断"}
+      </button>
+      {diagnosticsError ? <p className="capability-error">{diagnosticsError}</p> : null}
+      {diagnostics ? <DiagnosticsResult diagnostics={diagnostics} /> : null}
     </section>
+  );
+}
+
+function DiagnosticsResult({ diagnostics }) {
+  return (
+    <div className="diagnostics-result">
+      <DiagnosticCheck title="行情数据源" check={diagnostics.market_data} />
+      <DiagnosticCheck title="模型生成源" check={diagnostics.llm} />
+    </div>
+  );
+}
+
+function DiagnosticCheck({ title, check }) {
+  const statusText = {
+    success: "成功",
+    failed: "失败",
+    skipped: "跳过",
+  }[check.status];
+
+  return (
+    <div className={`diagnostic-check ${check.status}`}>
+      <div className="diagnostic-heading">
+        <strong>{title}</strong>
+        <span>{statusText}</span>
+      </div>
+      <p>{check.summary}</p>
+      <dl>
+        <div>
+          <dt>Provider</dt>
+          <dd>{check.provider}</dd>
+        </div>
+        <div>
+          <dt>耗时</dt>
+          <dd>{check.latency_ms} ms</dd>
+        </div>
+      </dl>
+      {check.error_message ? <p className="diagnostic-error">{check.error_message}</p> : null}
+    </div>
   );
 }
 

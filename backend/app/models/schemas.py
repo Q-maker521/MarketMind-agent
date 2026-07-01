@@ -101,3 +101,26 @@ class SystemCapabilitiesResponse(BaseModel):
     supported_markets: list[str]
     supported_time_ranges: list[str]
     notes: list[str]
+
+
+class ProviderDiagnosticsRequest(BaseModel):
+    symbol: str = Field(default="AAPL", min_length=1, max_length=16)
+    time_range: str = Field(default="1mo", min_length=1, max_length=16)
+    include_llm: bool = True
+
+
+class ProviderDiagnosticCheck(BaseModel):
+    name: str
+    provider: str
+    configured: bool
+    status: Literal["success", "failed", "skipped"]
+    latency_ms: int
+    summary: str
+    error_message: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ProviderDiagnosticsResponse(BaseModel):
+    created_at: datetime
+    market_data: ProviderDiagnosticCheck
+    llm: ProviderDiagnosticCheck

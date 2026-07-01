@@ -16,6 +16,7 @@ The project demonstrates how an Agent system can parse a research task, plan req
 - Report quality guardrails with structured review checks
 - Task history with filtering and audit metadata
 - Runtime capability panel showing which parts are real, configured, or mocked
+- Provider diagnostics for online market data and LLM smoke testing
 
 ## Current Status
 
@@ -93,6 +94,18 @@ LLM:
 - `OpenAICompatibleLLMProvider`
 
 If an external provider fails, the workflow records the failed tool call and falls back to the mock provider.
+
+### Provider Diagnostics
+
+The system capability panel includes a provider diagnostics action. It runs a lightweight smoke test against the configured market data provider and LLM provider, then reports:
+
+- provider implementation
+- configuration status
+- success, failure, or skipped state
+- latency
+- normalized error message
+
+This helps verify online deployments after changing environment variables, without guessing whether a real API key or model endpoint is working.
 
 ### Report Quality Review
 
@@ -194,6 +207,7 @@ Default mode requires no external key.
 ```text
 GET  /health
 GET  /api/system/capabilities
+POST /api/system/provider-diagnostics
 POST /api/analysis-tasks
 POST /api/analysis-tasks/workflow
 GET  /api/analysis-tasks?limit=20&symbol=AAPL&run_mode=workflow&status=SUCCESS

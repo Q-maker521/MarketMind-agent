@@ -61,3 +61,10 @@ export async function getReport(taskId) {
 export async function getSystemCapabilities() {
   return request("/api/system/capabilities");
 }
+
+export async function runProviderDiagnostics(payload) {
+  return request("/api/system/provider-diagnostics", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

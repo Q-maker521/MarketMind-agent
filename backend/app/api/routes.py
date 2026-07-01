@@ -4,6 +4,8 @@ from app.models.schemas import (
     AnalysisTaskCreate,
     AnalysisTaskResponse,
     AnalysisTaskSummaryResponse,
+    ProviderDiagnosticsRequest,
+    ProviderDiagnosticsResponse,
     ResearchReportResponse,
     SystemCapabilitiesResponse,
     ToolCallResponse,
@@ -12,6 +14,7 @@ from app.models.schemas import (
 from app.core.config import settings
 from app.services.demo_service import demo_service
 from app.services.demo_artifacts import seed_demo_task_id
+from app.services.provider_diagnostics import run_provider_diagnostics
 
 router = APIRouter()
 
@@ -64,6 +67,11 @@ def get_system_capabilities() -> SystemCapabilitiesResponse:
         supported_time_ranges=["1mo", "3mo", "6mo", "1y"],
         notes=notes,
     )
+
+
+@router.post("/system/provider-diagnostics", response_model=ProviderDiagnosticsResponse)
+def create_provider_diagnostics(payload: ProviderDiagnosticsRequest) -> ProviderDiagnosticsResponse:
+    return run_provider_diagnostics(payload)
 
 
 @router.post("/analysis-tasks", response_model=AnalysisTaskResponse)
