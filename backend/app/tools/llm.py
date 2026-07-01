@@ -50,10 +50,11 @@ class MockLLMProvider:
 class OpenAICompatibleLLMProvider:
     name = "openai_compatible"
 
-    def __init__(self, api_base_url: str, api_key: str, model: str) -> None:
+    def __init__(self, api_base_url: str, api_key: str, model: str, timeout_seconds: int) -> None:
         self._api_base_url = api_base_url.rstrip("/") + "/"
         self._api_key = api_key
         self._model = model
+        self._timeout_seconds = timeout_seconds
 
     def generate_report_commentary(
         self,
@@ -92,10 +93,12 @@ class OpenAICompatibleLLMProvider:
                             },
                         },
                         ensure_ascii=False,
+                        default=str,
                     ),
                 },
             ],
             "temperature": 0.2,
+            "max_tokens": 512,
         }
         request = Request(
             urljoin(self._api_base_url, "chat/completions"),
@@ -108,9 +111,9 @@ class OpenAICompatibleLLMProvider:
         )
 
         try:
-            with urlopen(request, timeout=30) as response:
+            with urlopen(request, timeout=self._timeout_seconds) as response:
                 response_payload = json.loads(response.read().decode("utf-8"))
-        except (TimeoutError, URLError, json.JSONDecodeError) as exc:
+        except (TimeoutError, OSError, URLError, json.JSONDecodeError) as exc:
             raise LLMProviderError(f"LLM request failed: {exc}") from exc
 
         try:
@@ -133,6 +136,7 @@ def get_llm_provider() -> LLMProvider:
             settings.llm_api_base_url,
             settings.llm_api_key,
             settings.llm_model,
+            settings.llm_timeout_seconds,
         )
     return MockLLMProvider()
 

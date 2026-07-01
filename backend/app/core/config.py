@@ -18,6 +18,7 @@ class Settings:
         self.llm_api_base_url = os.getenv("MARKETMIND_LLM_API_BASE_URL", "")
         self.llm_api_key = os.getenv("MARKETMIND_LLM_API_KEY", "")
         self.llm_model = os.getenv("MARKETMIND_LLM_MODEL", "")
+        self.llm_timeout_seconds = int(os.getenv("MARKETMIND_LLM_TIMEOUT_SECONDS", "90"))
 
     @staticmethod
     def _load_cors_origins() -> list[str]:
