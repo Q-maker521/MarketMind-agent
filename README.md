@@ -239,6 +239,7 @@ Deployment and online trial:
 ```text
 docs/DEPLOYMENT.md
 docs/REAL_WORLD_TRIAL.md
+docs/REAL_WORLD_TRIAL_RESULTS.md
 ```
 
 ## Portfolio Talking Points
