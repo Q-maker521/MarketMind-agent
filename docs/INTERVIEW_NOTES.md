@@ -40,7 +40,7 @@ React 前端
 
 ## Agent 工作流
 
-工作流包含 8 个节点：
+主路径包含 8 个节点：
 
 1. `TaskParser`
 2. `DataPlanner`
@@ -51,7 +51,12 @@ React 前端
 7. `ReportWriter`
 8. `ReportReviewer`
 
-每个节点都会写入一条 step 记录。工具调用会单独保存，包括状态、输入摘要、输出摘要、耗时和错误信息。
+同时，工作流在两个外部依赖点增加了 LangGraph 条件分支：
+
+- `MarketDataFetcher` 成功时进入 `IndicatorCalculator`，失败时进入 `MarketDataFallback`，再继续指标计算。
+- `ReportWriter` 成功时进入 `ReportReviewer`，失败时进入 `LLMReportFallback`，再继续质量评审。
+
+每个节点都会写入一条 step 记录。工具调用会单独保存，包括状态、输入摘要、输出摘要、耗时和错误信息。这样失败节点、fallback 节点和最终成功节点都可以在前端链路中看到。
 
 ## 工程亮点
 
@@ -72,9 +77,10 @@ React 前端
 
 1. 记录失败的工具调用
 2. 保存错误信息
-3. 回退到 mock provider
-4. 继续执行工作流
-5. 在前端展示 fallback 状态
+3. 通过 LangGraph 条件边进入显式 fallback 节点
+4. 回退到 mock provider 或确定性模板
+5. 继续执行工作流
+6. 在前端展示 fallback 状态
 
 这比直接抛异常或隐藏失败更接近生产项目的处理方式。
 

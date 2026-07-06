@@ -52,6 +52,7 @@ def _attach_tool_calls_to_steps(tool_calls: list[dict], steps: list[dict]) -> li
         "MarketDataProvider.get_mock_daily_prices": "MarketDataFetcher",
         "MockMarketDataProvider.get_daily_prices": "MarketDataFetcher",
         "AlphaVantageMarketDataProvider.get_daily_prices": "MarketDataFetcher",
+        "TwelveDataMarketDataProvider.get_daily_prices": "MarketDataFetcher",
         "IndicatorTool.calculate_basic_snapshot": "IndicatorCalculator",
         "IndicatorTool.calculate_basic_indicators": "IndicatorCalculator",
         "BacktestTool.buy_and_hold": "BacktestRunner",
@@ -61,9 +62,17 @@ def _attach_tool_calls_to_steps(tool_calls: list[dict], steps: list[dict]) -> li
         "ReportQualityReviewer.evaluate_report_quality": "ReportReviewer",
     }
 
+    has_market_data_fallback = "MarketDataFallback" in node_to_step_id
+    has_llm_report_fallback = "LLMReportFallback" in node_to_step_id
     normalized_calls: list[dict] = []
     for tool_call in tool_calls:
-        node_name = tool_to_node.get(tool_call["tool_name"])
+        tool_name = tool_call["tool_name"]
+        if tool_name == "MockMarketDataProvider.get_daily_prices" and has_market_data_fallback:
+            node_name = "MarketDataFallback"
+        elif tool_name == "MockLLMProvider.generate_report_commentary" and has_llm_report_fallback:
+            node_name = "LLMReportFallback"
+        else:
+            node_name = tool_to_node.get(tool_name)
         step_id = node_to_step_id.get(node_name, steps[0]["id"] if steps else tool_call["step_id"])
         normalized_calls.append({**tool_call, "step_id": step_id})
 

@@ -101,14 +101,19 @@ def _check_tool_evidence(tool_calls: list[dict[str, Any]]) -> dict[str, Any]:
 def _check_source_traceability(report: dict[str, Any]) -> dict[str, Any]:
     sources = report.get("sources", [])
     source_types = {source.get("type") for source in sources}
-    required_types = {"mock_data", "local_tool"}
-    missing_types = sorted(required_types - source_types)
+    has_data_source = bool({"mock_data", "market_data", "fallback_data"} & source_types)
+    has_local_tool = "local_tool" in source_types
+    missing_types = []
+    if not has_data_source:
+        missing_types.append("data_source")
+    if not has_local_tool:
+        missing_types.append("local_tool")
     return {
         "id": "source_traceability",
         "label": "来源追踪",
         "passed": not missing_types,
         "severity": "medium",
-        "detail": "报告已附带数据和工具来源。" if not missing_types else f"缺少来源类型：{', '.join(missing_types)}。",
+        "detail": "报告已附带行情数据和工具来源。" if not missing_types else f"缺少来源类型：{', '.join(missing_types)}。",
     }
 
 
