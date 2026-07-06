@@ -1,22 +1,22 @@
-# Interview Notes
+# 面试讲解稿
 
-## One-Line Project Pitch
+## 一句话项目介绍
 
-MarketMind Agent is an AI investment research workflow system that demonstrates production-style Agent engineering: workflow orchestration, tool calling, provider abstraction, fallback handling, persistence, trace visualization, and report quality review.
+MarketMind Agent 是一个 AI 投研工作流系统，用于展示生产化 Agent 工程能力：工作流编排、工具调用、Provider 抽象、失败降级、持久化、链路可视化和报告质量评审。
 
-## Problem
+## 项目要解决的问题
 
-Many Agent demos only show a single generated answer. This project focuses on the engineering lifecycle behind an Agent:
+很多 Agent Demo 只展示“生成了一个答案”。这个项目更关注 Agent 背后的工程生命周期：
 
-- how the task is parsed
-- how data requirements are planned
-- how tools are called
-- how intermediate artifacts are persisted
-- how failures are observed and recovered
-- how final output is reviewed
-- how users can inspect historical runs
+- 任务如何被解析
+- 数据需求如何被规划
+- 工具如何被调用
+- 中间产物如何被持久化
+- 失败如何被观测和恢复
+- 最终输出如何被评审
+- 用户如何检查历史运行记录
 
-## Architecture
+## 架构
 
 ```text
 React frontend
@@ -27,9 +27,20 @@ React frontend
   -> report and quality review
 ```
 
-## Agent Workflow
+中文解释：
 
-The workflow contains 8 nodes:
+```text
+React 前端
+  -> FastAPI 接口层
+  -> LangGraph 工作流
+  -> 本地工具与 provider 抽象
+  -> SQLite 持久化
+  -> 报告生成与质量评审
+```
+
+## Agent 工作流
+
+工作流包含 8 个节点：
 
 1. `TaskParser`
 2. `DataPlanner`
@@ -40,82 +51,92 @@ The workflow contains 8 nodes:
 7. `ReportWriter`
 8. `ReportReviewer`
 
-Each node writes a step record. Tool calls are stored separately with status, input summary, output summary, duration, and error message.
+每个节点都会写入一条 step 记录。工具调用会单独保存，包括状态、输入摘要、输出摘要、耗时和错误信息。
 
-## Engineering Highlights
+## 工程亮点
 
-### Provider Abstraction
+### Provider 抽象
 
-Market data and LLM calls are hidden behind provider interfaces.
+行情数据和 LLM 调用都隐藏在 provider 接口之后。
 
-This makes it possible to:
+这样做可以：
 
-- run a stable public demo with mock providers
-- enable real providers through environment variables
-- avoid hard-coding vendor-specific logic into workflow nodes
-- test fallback behavior deterministically
+- 使用 mock provider 运行稳定的公开演示
+- 通过环境变量启用真实 provider
+- 避免把供应商相关逻辑硬编码到工作流节点里
+- 确定性地测试 fallback 行为
 
-### Graceful Degradation
+### 优雅降级
 
-When a provider fails, the workflow:
+当 provider 失败时，工作流会：
 
-1. records a failed tool call
-2. stores the error message
-3. falls back to a mock provider
-4. continues the workflow
-5. exposes fallback status in the frontend
+1. 记录失败的工具调用
+2. 保存错误信息
+3. 回退到 mock provider
+4. 继续执行工作流
+5. 在前端展示 fallback 状态
 
-This is closer to production than simply throwing an exception or hiding the failure.
+这比直接抛异常或隐藏失败更接近生产项目的处理方式。
 
-### Guardrails
+### 质量护栏
 
-`ReportReviewer` performs deterministic checks:
+`ReportReviewer` 会做确定性的检查：
 
-- required sections
-- disclaimer
-- unsupported prediction language
-- tool evidence
-- source traceability
+- 必要章节是否完整
+- 是否包含免责声明
+- 是否出现不合理的预测或收益保证语言
+- 是否有工具证据
+- 是否具备来源可追溯性
 
-The frontend shows the quality score and each check result.
+前端会展示质量分和每一项检查结果。
 
-### Persistence And Auditability
+### 持久化与可审计性
 
-SQLite stores:
+SQLite 保存：
 
-- tasks
-- workflow steps
-- tool calls
-- reports
-- quality score
-- audit metadata
+- 任务
+- 工作流步骤
+- 工具调用
+- 报告
+- 质量分
+- 审计元数据
 
-Task history supports filtering by symbol, run mode, and status.
+任务历史支持按股票代码、运行模式和状态筛选。
 
-## Why The Project Uses Mock Defaults
+## 为什么默认使用 Mock
 
-The public demo should be stable and free to run. Mock defaults avoid:
+公开演示应该稳定、低成本、可重复。默认使用 Mock 可以避免：
 
-- API key collection
-- provider rate limits
-- unstable third-party data
-- unpredictable LLM output
-- demo cost
+- 收集 API Key
+- provider 限流
+- 第三方数据不稳定
+- LLM 输出不可控
+- 演示成本
 
-Real providers are still supported through configuration.
+真实 provider 仍然可以通过配置启用。
 
-## Resume Bullet Ideas
+## 简历描述备选
 
-- Built a FastAPI + LangGraph AI research Agent with explicit workflow nodes, persisted tool calls, and frontend trace visualization.
-- Designed provider abstractions for market data and OpenAI-compatible LLM calls with fallback handling and runtime capability reporting.
-- Implemented deterministic report quality guardrails and surfaced structured review results in the UI.
-- Added SQLite-backed task history with filtering, audit metadata, provider tracking, and quality scores.
+- 构建 FastAPI + LangGraph AI 投研 Agent，实现显式工作流节点、工具调用持久化和前端链路可视化。
+- 设计行情数据和 OpenAI-compatible LLM 的 provider 抽象，支持 fallback、运行时能力报告和线上诊断。
+- 实现确定性的报告质量护栏，并在 UI 中展示结构化评审结果。
+- 基于 SQLite 实现任务历史、筛选、审计元数据、provider 跟踪和质量分记录。
 
-## Follow-Up Improvements
+## 面试中可以主动展开的问题
 
-- Verify Alpha Vantage with a real API key
-- Verify an OpenAI-compatible LLM endpoint
-- Add shareable task detail URLs
-- Add deployment notes for a public website
-- Add PostgreSQL migration path
-- Add async execution with Redis/RQ
+- 为什么先做顺序工作流，而不是一开始做复杂多 Agent？
+- LangGraph 在项目中负责什么？状态如何在节点之间传递？
+- Tool Calling 的输入输出如何记录，如何用于排查问题？
+- provider 抽象解决了哪些工程问题？
+- fallback 如何证明系统在外部依赖失败时仍可用？
+- 报告质量评审为什么用确定性规则，而不是完全交给 LLM？
+- 如果要接入 RAG 或多 Agent，现有架构如何演进？
+
+## 后续改进
+
+- 使用真实 Alpha Vantage API Key 验证备用行情 provider
+- 增加更多 OpenAI-compatible LLM 的兼容性验证
+- 增加可分享的任务详情 URL
+- 补充更完整的公开网站部署说明
+- 增加 PostgreSQL 迁移路径
+- 使用 Redis/RQ 或其他队列实现异步执行

@@ -1,8 +1,8 @@
-# Deployment Guide
+# 部署指南
 
-This guide describes a simple non-Docker deployment for a public demo website.
+本文档描述一种简单的非 Docker 部署方式，用于把 MarketMind Agent 发布为公开演示网站。
 
-Recommended layout:
+推荐目录结构：
 
 ```text
 /opt/marketmind-agent/
@@ -13,7 +13,7 @@ Recommended layout:
     marketmind.db
 ```
 
-Recommended public URLs:
+推荐公开访问地址：
 
 ```text
 Frontend: https://your-domain.com
@@ -21,23 +21,23 @@ Backend API: https://your-domain.com/api
 Health:   https://your-domain.com/health
 ```
 
-## 1. Server Prerequisites
+## 1. 服务器前置条件
 
-Install:
+需要安装：
 
 - Python 3.11+
 - Node.js 20+
 - Nginx
 - Git
 
-Example on Ubuntu:
+Ubuntu 示例：
 
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-venv python3-pip nodejs npm nginx git
 ```
 
-## 2. Clone Repository
+## 2. 克隆仓库
 
 ```bash
 sudo mkdir -p /opt/marketmind-agent
@@ -46,7 +46,7 @@ cd /opt/marketmind-agent
 git clone https://github.com/Q-maker521/MarketMind-agent.git repo
 ```
 
-## 3. Backend Setup
+## 3. 后端配置
 
 ```bash
 cd /opt/marketmind-agent/repo/backend
@@ -55,13 +55,13 @@ python3 -m venv .venv
 pip install -r requirements.txt
 ```
 
-Create a real backend environment file:
+创建真实环境配置文件：
 
 ```bash
 cp .env.example .env
 ```
 
-Recommended production values:
+推荐生产环境配置：
 
 ```text
 MARKETMIND_APP_ENV=production
@@ -76,7 +76,7 @@ MARKETMIND_LLM_API_KEY=
 MARKETMIND_LLM_MODEL=
 ```
 
-Start once manually:
+先手动启动一次：
 
 ```bash
 cd /opt/marketmind-agent/repo/backend
@@ -84,21 +84,21 @@ cd /opt/marketmind-agent/repo/backend
 uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Check:
+检查健康状态：
 
 ```bash
 curl http://127.0.0.1:8000/health
 ```
 
-## 4. Backend systemd Service
+## 4. 后端 systemd 服务
 
-Create:
+创建服务文件：
 
 ```bash
 sudo nano /etc/systemd/system/marketmind-backend.service
 ```
 
-Service:
+服务内容：
 
 ```ini
 [Unit]
@@ -117,7 +117,7 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-Enable:
+启用服务：
 
 ```bash
 sudo systemctl daemon-reload
@@ -126,35 +126,35 @@ sudo systemctl start marketmind-backend
 sudo systemctl status marketmind-backend
 ```
 
-Logs:
+查看日志：
 
 ```bash
 journalctl -u marketmind-backend -f
 ```
 
-## 5. Frontend Build
+## 5. 前端构建
 
-Create frontend environment file:
+创建前端环境文件：
 
 ```bash
 cd /opt/marketmind-agent/repo/frontend
 cp .env.example .env.production
 ```
 
-Set:
+设置：
 
 ```text
 VITE_API_BASE_URL=https://your-domain.com
 ```
 
-Build:
+构建：
 
 ```bash
 npm install
 npm run build
 ```
 
-The static output is:
+静态文件输出目录：
 
 ```text
 /opt/marketmind-agent/repo/frontend/dist
@@ -162,13 +162,13 @@ The static output is:
 
 ## 6. Nginx
 
-Create:
+创建站点配置：
 
 ```bash
 sudo nano /etc/nginx/sites-available/marketmind-agent
 ```
 
-Example:
+示例配置：
 
 ```nginx
 server {
@@ -197,7 +197,7 @@ server {
 }
 ```
 
-Enable:
+启用配置：
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/marketmind-agent /etc/nginx/sites-enabled/marketmind-agent
@@ -207,39 +207,39 @@ sudo systemctl reload nginx
 
 ## 7. HTTPS
 
-If you have a domain:
+如果已经有域名，可以使用 Certbot 配置 HTTPS：
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d your-domain.com
 ```
 
-## 8. Real Provider Configuration
+## 8. 真实 Provider 配置
 
-Stable public demo:
+稳定公开演示模式：
 
 ```text
 MARKETMIND_MARKET_DATA_PROVIDER=mock
 MARKETMIND_LLM_PROVIDER=mock
 ```
 
-Real market data trial:
+真实行情数据测试：
 
-Demo-key real market data:
+Twelve Data demo key：
 
 ```text
 MARKETMIND_MARKET_DATA_PROVIDER=twelve_data
 MARKETMIND_TWELVE_DATA_API_KEY=demo
 ```
 
-Alpha Vantage market data:
+Alpha Vantage 行情数据：
 
 ```text
 MARKETMIND_MARKET_DATA_PROVIDER=alpha_vantage
 MARKETMIND_ALPHA_VANTAGE_API_KEY=your_key
 ```
 
-Real LLM trial:
+真实 LLM 测试：
 
 ```text
 MARKETMIND_LLM_PROVIDER=openai_compatible
@@ -248,37 +248,37 @@ MARKETMIND_LLM_API_KEY=your_key
 MARKETMIND_LLM_MODEL=your_model
 ```
 
-After changing `.env`:
+修改 `.env` 后重启后端：
 
 ```bash
 sudo systemctl restart marketmind-backend
 ```
 
-Check runtime capabilities:
+检查运行时能力：
 
 ```bash
 curl https://your-domain.com/api/system/capabilities
 ```
 
-## 9. Deployment Verification
+## 9. 部署验收
 
-Run these checks:
+运行：
 
 ```bash
 curl https://your-domain.com/health
 curl https://your-domain.com/api/system/capabilities
 ```
 
-Open the website and verify:
+打开网站并确认：
 
-- Workflow mode can create a task
-- Report tab shows quality checks
-- Trace tab shows all nodes
-- Tool calls tab shows providers and local tools
-- History filters work
-- System capability panel reflects provider configuration
+- Workflow 模式可以创建任务
+- 报告页签展示质量检查
+- 链路页签展示所有节点
+- 工具调用页签展示 provider 和本地工具
+- 历史筛选可用
+- 系统能力面板能反映 provider 配置
 
-## 10. Update Deployment
+## 10. 更新部署
 
 ```bash
 cd /opt/marketmind-agent/repo

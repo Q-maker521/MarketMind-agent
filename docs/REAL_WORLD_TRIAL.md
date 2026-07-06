@@ -1,29 +1,29 @@
-# Real-World Trial Plan
+# 真实环境测试计划
 
-The goal of the online trial is to prove product and engineering value, not to claim stock prediction accuracy.
+线上测试的目标是证明产品价值和工程价值，而不是宣称股票预测准确率。
 
-## What This Project Should Prove
+## 本项目应该证明什么
 
-MarketMind Agent should prove that it can:
+MarketMind Agent 应该证明它可以：
 
-- run a complete research workflow from question to report
-- collect or generate market data through a provider interface
-- calculate indicators and backtest metrics
-- generate a structured report
-- review report quality with deterministic guardrails
-- persist every step, tool call, report, and review result
-- let users inspect history and debug the workflow
+- 从用户问题到最终报告，跑完完整研究工作流
+- 通过 provider 接口采集或生成行情数据
+- 计算指标和回测指标
+- 生成结构化报告
+- 使用确定性护栏评审报告质量
+- 持久化每个步骤、工具调用、报告和评审结果
+- 让用户检查历史任务并调试工作流
 
-## Recommended Trial Setup
+## 推荐测试配置
 
-Start with stable public mode:
+先使用稳定公开模式：
 
 ```text
 MARKETMIND_MARKET_DATA_PROVIDER=mock
 MARKETMIND_LLM_PROVIDER=mock
 ```
 
-Then run a controlled real-provider trial:
+再运行受控的真实 provider 测试：
 
 ```text
 MARKETMIND_MARKET_DATA_PROVIDER=twelve_data
@@ -31,13 +31,13 @@ MARKETMIND_TWELVE_DATA_API_KEY=demo
 MARKETMIND_LLM_PROVIDER=openai_compatible
 ```
 
-`twelve_data` is useful for the first online trial because it provides real historical market data with a public demo key. `alpha_vantage` can be used later when you want to test a personal keyed market data provider.
+`twelve_data` 适合作为第一次线上测试的数据源，因为它可以通过 public demo key 获取真实历史行情。`alpha_vantage` 可以在后续需要测试个人 API Key 的行情 provider 时使用。
 
-If a provider fails, the value is still visible because the system records the failed tool call and falls back.
+如果 provider 失败，系统价值依然可见：失败的工具调用会被记录，工作流会回退到 fallback。
 
-## Trial Cases
+## 测试用例
 
-Run at least 5 tasks:
+至少运行 5 个任务：
 
 | Symbol | Time Range | Question |
 | --- | --- | --- |
@@ -47,58 +47,58 @@ Run at least 5 tasks:
 | AAPL | 1y | 分析 AAPL 最近 1 年表现，并给出非投资建议式研究摘要。 |
 | MSFT | 1mo | 快速分析 MSFT 最近 1 个月走势，验证短周期报告能力。 |
 
-## Evidence To Capture
+## 需要记录的证据
 
-For each run, record:
+每次运行记录：
 
-- public URL
+- 公开 URL
 - task id
 - symbol
 - time range
 - run mode
 - market data provider
 - LLM provider
-- whether fallback happened
+- 是否发生 fallback
 - quality score
 - failed tool count
-- report screenshot
-- trace screenshot
-- tool call screenshot
-- history card screenshot
-- provider diagnostics screenshot after changing real/mock provider config
+- report 截图
+- trace 截图
+- tool call 截图
+- history card 截图
+- 切换真实/模拟 provider 配置后的 provider diagnostics 截图
 
-## Success Criteria
+## 成功标准
 
-The trial is successful if:
+测试成功需要满足：
 
-- at least 5 workflow tasks finish successfully
-- quality score is visible for every report
-- tool calls are visible and understandable
-- history filters can recover previous tasks
-- provider status is visible in system capabilities
-- fallback behavior is visible when intentionally misconfigured
-- no API key is exposed in the frontend
-- provider diagnostics can verify market data and LLM connectivity after config changes
+- 至少 5 个 workflow 任务成功完成
+- 每份报告都能看到 quality score
+- 工具调用可见且容易理解
+- 历史筛选可以恢复之前的任务
+- 系统能力里能看到 provider 状态
+- 故意错误配置时能看到 fallback 行为
+- 前端没有暴露 API Key
+- 修改配置后，provider diagnostics 可以验证行情数据和 LLM 连通性
 
-## Intentional Failure Test
+## 故意失败测试
 
-After successful normal trials, intentionally test a bad provider config:
+正常测试成功后，可以故意配置一个错误 provider：
 
 ```text
 MARKETMIND_MARKET_DATA_PROVIDER=alpha_vantage
 MARKETMIND_ALPHA_VANTAGE_API_KEY=bad_key
 ```
 
-Expected result:
+预期结果：
 
-- workflow still completes
-- failed provider call appears in tool calls
-- fallback banner appears
-- history task shows `has_fallback=true`
+- 工作流仍然完成
+- 失败的 provider 调用出现在工具调用列表中
+- fallback 提示出现
+- 历史任务显示 `has_fallback=true`
 
-Then restore the correct config.
+然后恢复正确配置。
 
-## Trial Notes Template
+## 测试记录模板
 
 ```text
 Date:
@@ -124,22 +124,22 @@ Observed issue:
 Screenshot files:
 ```
 
-## How To Talk About Trial Value
+## 如何描述测试价值
 
-Good statement:
+推荐说法：
 
 ```text
-I validated the project in an online environment by running multiple research workflows, checking persisted tool traces, provider status, quality scores, fallback behavior, and task history recovery.
+我在真实线上环境中验证了该项目：运行多次研究工作流，检查持久化的工具链路、provider 状态、质量分、fallback 行为和历史任务恢复。
 ```
 
-Avoid:
+避免说法：
 
 ```text
-This Agent predicts stock prices accurately.
+这个 Agent 可以准确预测股价。
 ```
 
-Better:
+更好的说法：
 
 ```text
-This Agent improves the research workflow by making data collection, indicator calculation, report generation, quality review, and trace inspection reproducible and auditable.
+这个 Agent 的价值在于把数据采集、指标计算、报告生成、质量评审和链路检查变成可复现、可审计的研究工作流。
 ```

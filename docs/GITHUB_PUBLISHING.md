@@ -1,14 +1,14 @@
-# GitHub Publishing Notes
+# GitHub 发布说明
 
-## Repository Name
+## 仓库名称
 
-Recommended:
+推荐：
 
 ```text
 marketmind-agent
 ```
 
-## Short Description
+## 简短描述
 
 ```text
 AI investment research Agent workflow with LangGraph, FastAPI, React, tool-call tracing, provider fallback, and report quality guardrails.
@@ -29,28 +29,28 @@ investment-research
 portfolio-project
 ```
 
-## Suggested GitHub About Text
+## GitHub About 推荐文案
 
-MarketMind Agent is a portfolio project demonstrating production-style AI Agent engineering: workflow orchestration, tool calling, provider abstraction, graceful fallback, persisted execution traces, quality guardrails, and a React-based inspection UI.
+MarketMind Agent 是一个 AI Agent 工程作品集项目，用于展示生产化 Agent 落地能力：工作流编排、工具调用、Provider 抽象、失败降级、执行链路持久化、质量护栏，以及基于 React 的可视化检查界面。
 
-## First Push
+## 首次推送
 
-Create an empty GitHub repository first, then run:
+先在 GitHub 创建一个空仓库，然后执行：
 
 ```bash
 git remote add origin https://github.com/<your-name>/marketmind-agent.git
 git push -u origin main
 ```
 
-## Before Pushing
+## 推送前检查
 
-Run:
+执行：
 
 ```bash
 git status --short --ignored
 ```
 
-Expected ignored local files may include:
+预期被忽略的本地文件可能包括：
 
 ```text
 backend/marketmind.db
@@ -62,14 +62,14 @@ frontend/server.log
 frontend/server.err.log
 ```
 
-Do not commit real `.env` files or API keys.
+不要提交真实 `.env` 文件或 API Key。
 
-## Resume Project Name
+## 简历项目名称
 
 ```text
 MarketMind Agent - AI 投研工作流 Agent
 ```
 
-## Resume One-Liner
+## 简历一句话
 
 基于 FastAPI、LangGraph 和 React 构建 AI 投研工作流 Agent，实现任务解析、工具调用、Provider 抽象、失败降级、链路可视化、报告质量检查与历史任务审计。

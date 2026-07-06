@@ -1,16 +1,16 @@
-# Real-World Trial Results
+# 真实环境测试结果
 
-Date: 2026-07-06
+日期：2026-07-06
 
-Public URL:
+公开访问地址：
 
 ```text
 http://8.139.5.187:8080/
 ```
 
-## Runtime Capability
+## 运行时能力
 
-Online runtime check:
+线上运行时检查：
 
 ```text
 GET /health -> {"status":"ok"}
@@ -25,7 +25,7 @@ external_llm_ready=true
 llm_model=qwen3.7-plus
 ```
 
-Provider diagnostics:
+Provider 诊断结果：
 
 ```text
 Market data:
@@ -44,9 +44,9 @@ LLM:
   latency_ms=35676
 ```
 
-## Trial Runs
+## 测试运行记录
 
-### Trial 1
+### 测试 1
 
 ```text
 task_id=task-aapl-1mo-003faa68
@@ -61,7 +61,7 @@ stance=neutral
 confidence=0.60
 ```
 
-Tool calls:
+工具调用：
 
 ```text
 TwelveDataMarketDataProvider.get_daily_prices -> SUCCESS
@@ -71,13 +71,13 @@ OpenAICompatibleLLMProvider.generate_report_commentary -> SUCCESS
 ReportQualityReviewer.evaluate_report_quality -> SUCCESS
 ```
 
-Report summary:
+报告摘要：
 
 ```text
-AAPL was nearly flat over the 1-month window, with meaningful drawdown during the period and a later stabilization above key moving averages. The report described mixed momentum, with AI and services growth as support factors and device demand plus regulatory pressure as risks.
+AAPL 在 1 个月窗口内整体接近持平，期间出现过明显回撤，后续在关键均线之上企稳。报告认为动量偏混合，AI 和服务业务增长构成支撑，设备需求和监管压力是主要风险。
 ```
 
-### Trial 2
+### 测试 2
 
 ```text
 task_id=task-aapl-3mo-a8b24f03
@@ -92,7 +92,7 @@ stance=bullish
 confidence=0.85
 ```
 
-Tool calls:
+工具调用：
 
 ```text
 TwelveDataMarketDataProvider.get_daily_prices -> SUCCESS
@@ -102,13 +102,13 @@ OpenAICompatibleLLMProvider.generate_report_commentary -> SUCCESS
 ReportQualityReviewer.evaluate_report_quality -> SUCCESS
 ```
 
-Report summary:
+报告摘要：
 
 ```text
-AAPL gained about 20.6% over the 3-month window. The report described a constructive technical setup, supported by device demand, AI features, and services growth, while still noting regulatory pressure.
+AAPL 在 3 个月窗口内上涨约 20.6%。报告描述了较积极的技术形态，设备需求、AI 功能和服务业务增长构成支撑，同时仍提示监管压力。
 ```
 
-### Trial 3
+### 测试 3
 
 ```text
 task_id=task-aapl-6mo-2cc76b9c
@@ -123,7 +123,7 @@ stance=bullish
 confidence=0.75
 ```
 
-Tool calls:
+工具调用：
 
 ```text
 TwelveDataMarketDataProvider.get_daily_prices -> SUCCESS
@@ -133,29 +133,28 @@ OpenAICompatibleLLMProvider.generate_report_commentary -> SUCCESS
 ReportQualityReviewer.evaluate_report_quality -> SUCCESS
 ```
 
-Report summary:
+报告摘要：
 
 ```text
-AAPL gained about 13.53% over the 6-month window and remained above the 20-day and 60-day moving averages. The report described positive momentum supported by AI feature releases and services growth, with regulatory pressure as a risk factor.
+AAPL 在 6 个月窗口内上涨约 13.53%，并保持在 20 日和 60 日均线之上。报告认为 AI 功能发布和服务业务增长支撑了正向动量，同时将监管压力列为风险因素。
 ```
 
-## What This Proves
+## 这些结果证明了什么
 
-These runs verify that the online deployment can:
+这些运行记录验证了线上部署可以：
 
-- accept public workflow requests,
-- fetch real historical market data through the provider abstraction,
-- calculate indicators and backtest metrics,
-- call a real OpenAI-compatible LLM endpoint,
-- persist task, step, tool-call, and report artifacts,
-- run deterministic report quality checks,
-- expose execution evidence through the API and frontend.
+- 接收公开工作流请求
+- 通过 provider 抽象获取真实历史行情数据
+- 计算指标和回测指标
+- 调用真实 OpenAI-compatible LLM endpoint
+- 持久化任务、步骤、工具调用和报告产物
+- 执行确定性的报告质量检查
+- 通过 API 和前端暴露执行证据
 
-This is not a claim of stock prediction accuracy. The validated value is reproducible, inspectable, production-style Agent workflow execution.
+这不是对股票预测准确性的声明。已经验证的价值是：可复现、可检查、接近生产形态的 Agent 工作流执行能力。
 
-## Interview Talking Point
+## 面试讲解点
 
 ```text
-I validated MarketMind Agent in a real online environment. The deployed workflow used Twelve Data for real market data and an OpenAI-compatible Qwen model for report generation. Each run persisted the task, workflow steps, provider tool calls, generated report, and deterministic quality review. I also tested provider fallback behavior earlier, so the system can remain usable even when an external dependency fails.
+我在真实线上环境中验证了 MarketMind Agent。部署后的工作流使用 Twelve Data 获取真实行情数据，并使用 OpenAI-compatible 的 Qwen 模型生成报告。每次运行都会持久化任务、工作流步骤、provider 工具调用、生成报告和确定性质量评审。我也在早期测试过 provider fallback 行为，因此外部依赖失败时系统仍可以保持可用。
 ```
-

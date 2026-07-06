@@ -1,37 +1,37 @@
-# Acceptance Checklist
+# 验收清单
 
-Use this checklist before pushing the project to GitHub or showing it in an interview.
+在推送到 GitHub、部署线上环境或用于面试展示前，可以按这份清单做一次完整验收。
 
-## Local Services
+## 本地服务
 
-- [ ] Backend starts on `http://127.0.0.1:8000`
-- [ ] Frontend starts on `http://127.0.0.1:5173`
-- [ ] `GET /health` returns `{"status":"ok"}`
-- [ ] `GET /api/system/capabilities` returns runtime metadata
-- [ ] Provider diagnostics can run from the frontend system capability panel
+- [ ] 后端可以启动在 `http://127.0.0.1:8000`
+- [ ] 前端可以启动在 `http://127.0.0.1:5173`
+- [ ] `GET /health` 返回 `{"status":"ok"}`
+- [ ] `GET /api/system/capabilities` 返回运行时元数据
+- [ ] 前端系统能力面板可以运行 provider 诊断
 
-## Frontend Workflow
+## 前端工作流
 
-- [ ] Demo mode can create and load a stable sample report
-- [ ] Workflow mode can run a new LangGraph task
-- [ ] Report tab shows summary, Markdown report, and quality review
-- [ ] Trace tab shows workflow nodes and durations
-- [ ] Tool calls tab shows tool name, status, input, output, and duration
-- [ ] Failed tool calls are visually distinct
-- [ ] Fallback banner appears when a provider fails
-- [ ] Provider diagnostics shows market data and LLM provider status, latency, and error details
+- [ ] Demo 模式可以创建并加载稳定的样例报告
+- [ ] Workflow 模式可以运行一个新的 LangGraph 任务
+- [ ] 报告页签展示摘要、Markdown 报告和质量评审结果
+- [ ] 链路页签展示工作流节点和执行耗时
+- [ ] 工具调用页签展示工具名称、状态、输入、输出和耗时
+- [ ] 失败的工具调用有明显的视觉区分
+- [ ] provider 失败时出现 fallback 提示
+- [ ] provider 诊断展示行情 provider 和 LLM provider 的状态、延迟和错误详情
 
-## Task History
+## 任务历史
 
-- [ ] Recent tasks appear in the left history panel
-- [ ] Clicking a historical task restores report, trace, tools, and review
-- [ ] Symbol filter works
-- [ ] Run mode filter works
-- [ ] Status filter works
-- [ ] Refresh button reloads history
-- [ ] History cards show run mode, quality score, fallback status, market provider, and LLM provider
+- [ ] 最近任务出现在左侧历史面板
+- [ ] 点击历史任务可以恢复报告、链路、工具调用和评审结果
+- [ ] 股票代码筛选可用
+- [ ] 运行模式筛选可用
+- [ ] 状态筛选可用
+- [ ] 刷新按钮可以重新加载历史
+- [ ] 历史卡片展示运行模式、质量分、fallback 状态、行情 provider 和 LLM provider
 
-## Backend API
+## 后端 API
 
 - [ ] `POST /api/analysis-tasks`
 - [ ] `POST /api/analysis-tasks/workflow`
@@ -42,7 +42,7 @@ Use this checklist before pushing the project to GitHub or showing it in an inte
 - [ ] `GET /api/analysis-tasks/{task_id}/tool-calls`
 - [ ] `GET /api/analysis-tasks/{task_id}/report`
 
-## Verification Commands
+## 验证命令
 
 ```bash
 python -m compileall backend\app
@@ -50,22 +50,22 @@ cd frontend
 npm run build
 ```
 
-## GitHub Hygiene
+## GitHub 提交卫生
 
-- [ ] `backend/marketmind.db` is not committed
-- [ ] `backend/server.log` and `backend/server.err.log` are not committed
-- [ ] `frontend/node_modules` is not committed
-- [ ] `frontend/dist` is not committed
-- [ ] Real `.env` files are not committed
-- [ ] `.env.example` files are committed
+- [ ] `backend/marketmind.db` 没有被提交
+- [ ] `backend/server.log` 和 `backend/server.err.log` 没有被提交
+- [ ] `frontend/node_modules` 没有被提交
+- [ ] `frontend/dist` 没有被提交
+- [ ] 真实 `.env` 文件没有被提交
+- [ ] `.env.example` 文件已经被提交
 
-## Demo Script
+## 演示脚本
 
-1. Open the frontend.
-2. Point out the system capability panel.
-3. Run provider diagnostics and explain real/mock provider observability.
-4. Run workflow mode for `AAPL`.
-5. Open the trace tab and explain each Agent node.
-6. Open tool calls and explain provider/tool observability.
-7. Open the report tab and explain quality review.
-8. Use history filters to reload a previous workflow task.
+1. 打开前端页面。
+2. 指出系统能力面板。
+3. 运行 provider 诊断，并解释真实/模拟 provider 的可观测性。
+4. 使用 `AAPL` 运行 Workflow 模式。
+5. 打开链路页签，解释每个 Agent 节点。
+6. 打开工具调用页签，解释 provider/tool 的可观测性。
+7. 打开报告页签，解释质量评审。
+8. 使用历史筛选功能重新加载之前的工作流任务。
